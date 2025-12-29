@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  Github, Star, Zap, Share2, Download, Calendar, Award, RefreshCw 
+import {
+  Github, Star, Zap, Share2, Download, Calendar, Award, RefreshCw
 } from 'lucide-react';
 
 // --- TYPES ---
@@ -92,10 +92,9 @@ const StoryProgress: React.FC<StoryProgressProps> = ({ total, current, onComplet
     <div className="absolute top-0 left-0 w-full z-50 flex gap-1 p-2 pt-4 safe-area-top">
       {Array.from({ length: total }).map((_, idx) => (
         <div key={idx} className="h-1 flex-1 bg-white/20 rounded-full overflow-hidden">
-          <div 
-            className={`h-full bg-white transition-all duration-100 ease-linear ${
-              idx < current ? 'w-full' : 'w-0'
-            }`}
+          <div
+            className={`h-full bg-white transition-all duration-100 ease-linear ${idx < current ? 'w-full' : 'w-0'
+              }`}
             style={
               idx === current ? {
                 animationName: 'progress',
@@ -116,15 +115,16 @@ const StoryProgress: React.FC<StoryProgressProps> = ({ total, current, onComplet
 // --- SLIDE COMPONENTS ---
 interface SlideProps {
   data: MockData;
+  onFinish?: () => void;
 }
 
 const IntroSlide: React.FC<SlideProps> = ({ data }) => (
   <div className="flex flex-col items-center justify-center h-full text-center px-6 text-white">
     <div className="mb-8 relative">
       <div className="absolute inset-0 bg-green-500/30 blur-[60px] rounded-full animate-pulse" />
-      <img 
-        src={data.avatar} 
-        alt="avatar" 
+      <img
+        src={data.avatar}
+        alt="avatar"
         className="w-32 h-32 rounded-full border-4 border-white/10 relative z-10 shadow-2xl animate-scale-up-vibrant"
       />
     </div>
@@ -196,17 +196,17 @@ const DaySlide: React.FC<SlideProps> = ({ data }) => (
 const LanguagesSlide: React.FC<SlideProps> = ({ data }) => (
   <div className="flex flex-col justify-center h-full px-8 text-white font-grotesk">
     <h2 className="text-5xl font-black mb-8 leading-[0.9]">
-      You speak <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">fluent code.</span>
+      You speak <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">fluent code.</span>
     </h2>
-    
+
     <div className="space-y-4">
       {data.stats.topLanguages.map((lang, i) => (
-        <div 
-          key={lang.name} 
+        <div
+          key={lang.name}
           className="relative h-16 bg-white/5 rounded-xl overflow-hidden flex items-center px-4 animate-text-reveal"
           style={{ animationDelay: `${i * 100}ms` }}
         >
-          <div 
+          <div
             className="absolute top-0 left-0 h-full opacity-20 transition-all duration-1000 ease-out"
             style={{ width: `${lang.percent}%`, backgroundColor: lang.color }}
           />
@@ -220,14 +220,14 @@ const LanguagesSlide: React.FC<SlideProps> = ({ data }) => (
   </div>
 );
 
-const SummarySlide: React.FC<SlideProps> = ({ data }) => (
+const SummarySlide: React.FC<SlideProps> = ({ data, onFinish }) => (
   <div className="flex flex-col items-center justify-center h-full px-6 pt-12 pb-24 text-white font-grotesk">
     <div className="relative w-full aspect-[4/5] max-h-[60vh] bg-slate-900 rounded-3xl overflow-hidden border border-white/10 shadow-2xl animate-scale-up-vibrant group">
       {/* Card Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-black" />
       <div className="absolute top-0 right-0 w-64 h-64 bg-green-500/20 blur-[80px] rounded-full" />
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/20 blur-[80px] rounded-full" />
-      
+
       {/* Card Content */}
       <div className="relative z-10 h-full flex flex-col p-6 text-center">
         <div className="flex justify-between items-start mb-6">
@@ -243,9 +243,9 @@ const SummarySlide: React.FC<SlideProps> = ({ data }) => (
         <div className="flex-1 flex flex-col items-center justify-center">
           <div className="relative mb-6">
             <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-500 rounded-full blur-lg opacity-50" />
-            <img 
-              src={data.avatar} 
-              className="w-24 h-24 rounded-full border-4 border-slate-900 relative z-10" 
+            <img
+              src={data.avatar}
+              className="w-24 h-24 rounded-full border-4 border-slate-900 relative z-10"
             />
             <div className="absolute -bottom-2 -right-2 bg-yellow-400 text-black p-1 rounded-full border-4 border-slate-900 z-20">
               <Award size={16} />
@@ -274,8 +274,8 @@ const SummarySlide: React.FC<SlideProps> = ({ data }) => (
         <div className="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">
           <div className="text-xs font-mono opacity-40">github-wrapped.com</div>
           <div className="flex gap-1">
-            {[1,2,3,4,5].map(i => (
-              <div key={i} className={`w-1 h-4 rounded-full ${i<4 ? 'bg-green-500' : 'bg-green-900'}`} />
+            {[1, 2, 3, 4, 5].map(i => (
+              <div key={i} className={`w-1 h-4 rounded-full ${i < 4 ? 'bg-green-500' : 'bg-green-900'}`} />
             ))}
           </div>
         </div>
@@ -286,8 +286,11 @@ const SummarySlide: React.FC<SlideProps> = ({ data }) => (
       <button className="flex-1 bg-white text-black font-bold py-4 rounded-full flex items-center justify-center gap-2 hover:scale-105 transition-transform">
         <Share2 size={18} /> Share
       </button>
-      <button className="flex-1 bg-white/10 font-bold py-4 rounded-full flex items-center justify-center gap-2 backdrop-blur-md hover:bg-white/20 transition-colors">
-        <Download size={18} /> Save
+      <button
+        onClick={onFinish}
+        className="flex-1 bg-white/10 font-bold py-4 rounded-full flex items-center justify-center gap-2 backdrop-blur-md hover:bg-white/20 transition-colors"
+      >
+        <Download size={18} /> View Report
       </button>
     </div>
   </div>
@@ -298,6 +301,7 @@ const SummarySlide: React.FC<SlideProps> = ({ data }) => (
 interface StoryModeProps {
   data?: MockData; // Optional, can generate internally if missing
   onReset?: () => void;
+  onFinish?: () => void;
 }
 
 // Default Data Generator if no props provided
@@ -324,10 +328,10 @@ const defaultData: MockData = {
   }
 };
 
-const StoryMode: React.FC<StoryModeProps> = ({ data = defaultData, onReset }) => {
+const StoryMode: React.FC<StoryModeProps> = ({ data = defaultData, onReset, onFinish }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  
+
   const slides = [
     { id: 'intro', component: IntroSlide, theme: 'from-slate-900 to-slate-800' },
     { id: 'commits', component: CommitsSlide, theme: 'from-green-900 to-slate-900' },
@@ -364,7 +368,7 @@ const StoryMode: React.FC<StoryModeProps> = ({ data = defaultData, onReset }) =>
   }, [nextSlide, prevSlide]);
 
   return (
-    <div 
+    <div
       className={`fixed inset-0 z-50 transition-colors duration-700 ease-in-out bg-gradient-to-br ${slides[currentSlide].theme} select-none`}
       onMouseDown={() => setIsPaused(true)}
       onMouseUp={() => setIsPaused(false)}
@@ -373,18 +377,18 @@ const StoryMode: React.FC<StoryModeProps> = ({ data = defaultData, onReset }) =>
     >
       <StoryStyles />
       <div className="noise-overlay" />
-      
+
       {/* Progress Bars */}
-      <StoryProgress 
-        total={slides.length} 
-        current={currentSlide} 
+      <StoryProgress
+        total={slides.length}
+        current={currentSlide}
         onComplete={nextSlide}
         isPaused={isPaused}
       />
 
       {/* Close/Reset Button */}
       {onReset && (
-        <button 
+        <button
           onClick={onReset}
           className="absolute top-6 right-4 z-50 p-2 bg-black/20 rounded-full backdrop-blur-md text-white/50 hover:text-white transition-colors"
         >
@@ -402,7 +406,7 @@ const StoryMode: React.FC<StoryModeProps> = ({ data = defaultData, onReset }) =>
       <div className="relative z-30 h-full max-w-md mx-auto safe-area-bottom pointer-events-none">
         {/* Enable pointer events on children if they have interactive elements */}
         <div key={currentSlide} className="h-full pointer-events-auto">
-          <CurrentComponent data={data} />
+          <CurrentComponent data={data} onFinish={onFinish} />
         </div>
       </div>
     </div>
