@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Github, ArrowRight, Code, Zap, Share2, Terminal, Activity, Star } from 'lucide-react';
 
 // --- STYLES & ANIMATIONS ---
