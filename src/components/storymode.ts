@@ -1,36 +1,16 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
-  Github, 
-  Star, 
-  GitFork, 
-  Code, 
-  Zap, 
-  Share2, 
-  Download, 
-  Terminal, 
-  ArrowRight,
-  TrendingUp,
-  Award,
-  Sparkles,
-  RefreshCw,
-  Copy,
-  Check,
-  Calendar,
-  Clock,
-  Heart,
-  Music,
-  LucideIcon
+  Github, Star, Zap, Share2, Download, Calendar, Award, RefreshCw 
 } from 'lucide-react';
 
 // --- TYPES ---
-
-interface Language {
+export interface Language {
   name: string;
   percent: number;
   color: string;
 }
 
-interface Stats {
+export interface Stats {
   commits: number;
   repos: number;
   starsReceived: number;
@@ -43,39 +23,15 @@ interface Stats {
   personalityDesc: string;
 }
 
-interface MockData {
+export interface MockData {
   username: string;
   avatar: string;
   year: number;
   stats: Stats;
 }
 
-// --- MOCK DATA ENGINE ---
-const generateMockData = (username: string): MockData => ({
-  username: username || "developer",
-  avatar: `https://github.com/${username}.png`,
-  year: 2024,
-  stats: {
-    commits: Math.floor(Math.random() * 3000) + 500,
-    repos: Math.floor(Math.random() * 50) + 5,
-    starsReceived: Math.floor(Math.random() * 1000) + 50,
-    forks: Math.floor(Math.random() * 200) + 10,
-    topLanguages: [
-      { name: "TypeScript", percent: 45, color: "#3178c6" },
-      { name: "Rust", percent: 30, color: "#dea584" },
-      { name: "Python", percent: 15, color: "#3572A5" },
-      { name: "Go", percent: 10, color: "#00ADD8" }
-    ],
-    busiestDay: ["Tuesday", "Wednesday", "Thursday"][Math.floor(Math.random() * 3)],
-    busiestTime: ["Late Night 🌑", "Early Morning 🌅", "Lunch Break 🥪"][Math.floor(Math.random() * 3)],
-    longestStreak: Math.floor(Math.random() * 40) + 5,
-    personality: ["The Night Owl 🦉", "The PR Machine 🤖", "The Bug Hunter 🕸️", "The Architect 🏛️"][Math.floor(Math.random() * 4)],
-    personalityDesc: "You don't just write code; you craft digital legacies. Your commit graph looks like a green mountain range."
-  }
-});
-
 // --- STYLES & ANIMATIONS ---
-const GlobalStyles: React.FC = () => (
+const StoryStyles: React.FC = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
 
@@ -84,51 +40,25 @@ const GlobalStyles: React.FC = () => (
       --font-mono: 'JetBrains Mono', monospace;
     }
 
-    body {
-      font-family: var(--font-grotesk);
-    }
+    .font-grotesk { font-family: var(--font-grotesk); }
+    .font-mono { font-family: var(--font-mono); }
 
-    /* Keyframes */
-    @keyframes slide-in-right {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slide-out-left {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(-20%); opacity: 0; }
+    /* Animations */
+    @keyframes text-reveal {
+      0% { transform: translateY(100%); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
     }
     @keyframes scale-up-vibrant {
       0% { transform: scale(0.8); opacity: 0; filter: blur(10px); }
       100% { transform: scale(1); opacity: 1; filter: blur(0px); }
     }
-    @keyframes text-reveal {
-      0% { transform: translateY(100%); opacity: 0; }
-      100% { transform: translateY(0); opacity: 1; }
-    }
-    @keyframes gradient-shift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    @keyframes grain {
-      0%, 100% { transform: translate(0, 0); }
-      10% { transform: translate(-5%, -10%); }
-      20% { transform: translate(-15%, 5%); }
-      30% { transform: translate(7%, -25%); }
-      40% { transform: translate(-5%, 25%); }
-      50% { transform: translate(-15%, 10%); }
-      60% { transform: translate(15%, 0%); }
-      70% { transform: translate(0%, 15%); }
-      80% { transform: translate(3%, 35%); }
-      90% { transform: translate(-10%, 10%); }
-    }
+    @keyframes progress { from { width: 0%; } to { width: 100%; } }
 
-    /* Utilities */
-    .font-grotesk { font-family: var(--font-grotesk); }
-    .font-mono { font-family: var(--font-mono); }
-    
     .animate-text-reveal {
       animation: text-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .animate-scale-up-vibrant {
+      animation: scale-up-vibrant 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     .glass-panel {
@@ -137,31 +67,19 @@ const GlobalStyles: React.FC = () => (
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     }
-
+    
     .noise-overlay {
       position: fixed;
-      top: -50%;
-      left: -50%;
-      right: -50%;
-      bottom: -50%;
-      width: 200%;
-      height: 200vh;
-      background: transparent url('http://assets.iceable.com/img/noise-transparent.png') repeat 0 0;
-      background-repeat: repeat;
-      animation: grain 8s steps(10) infinite;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: transparent url('https://assets.iceable.com/img/noise-transparent.png') repeat 0 0;
       opacity: 0.05;
       pointer-events: none;
-      z-index: 50;
+      z-index: 10;
     }
-
-    /* Hide Scrollbar */
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   `}</style>
 );
 
 // --- COMPONENT: STORY PROGRESS BAR ---
-
 interface StoryProgressProps {
   total: number;
   current: number;
@@ -191,21 +109,17 @@ const StoryProgress: React.FC<StoryProgressProps> = ({ total, current, onComplet
           />
         </div>
       ))}
-      <style>{`
-        @keyframes progress { from { width: 0%; } to { width: 100%; } }
-      `}</style>
     </div>
   );
 };
 
 // --- SLIDE COMPONENTS ---
-
 interface SlideProps {
   data: MockData;
 }
 
 const IntroSlide: React.FC<SlideProps> = ({ data }) => (
-  <div className="flex flex-col items-center justify-center h-full text-center px-6">
+  <div className="flex flex-col items-center justify-center h-full text-center px-6 text-white">
     <div className="mb-8 relative">
       <div className="absolute inset-0 bg-green-500/30 blur-[60px] rounded-full animate-pulse" />
       <img 
@@ -214,7 +128,7 @@ const IntroSlide: React.FC<SlideProps> = ({ data }) => (
         className="w-32 h-32 rounded-full border-4 border-white/10 relative z-10 shadow-2xl animate-scale-up-vibrant"
       />
     </div>
-    <h1 className="text-6xl font-black mb-4 tracking-tighter leading-[0.9] overflow-hidden">
+    <h1 className="text-6xl font-black mb-4 tracking-tighter leading-[0.9] overflow-hidden font-grotesk">
       <span className="block animate-text-reveal delay-100">HELLO</span>
       <span className="block animate-text-reveal delay-200 text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-400">
         @{data.username}
@@ -227,7 +141,7 @@ const IntroSlide: React.FC<SlideProps> = ({ data }) => (
 );
 
 const CommitsSlide: React.FC<SlideProps> = ({ data }) => (
-  <div className="flex flex-col justify-center h-full px-8 relative overflow-hidden">
+  <div className="flex flex-col justify-center h-full px-8 relative overflow-hidden text-white font-grotesk">
     <div className="absolute -right-20 top-20 opacity-10 rotate-12">
       <Github size={400} />
     </div>
@@ -252,7 +166,7 @@ const CommitsSlide: React.FC<SlideProps> = ({ data }) => (
 );
 
 const DaySlide: React.FC<SlideProps> = ({ data }) => (
-  <div className="flex flex-col justify-center h-full px-8 bg-black/20">
+  <div className="flex flex-col justify-center h-full px-8 bg-black/20 text-white font-grotesk">
     <h2 className="text-4xl font-black mb-12 text-center leading-tight">
       <span className="block text-white/50 text-2xl mb-2">You were a</span>
       {data.stats.busiestTime}
@@ -280,7 +194,7 @@ const DaySlide: React.FC<SlideProps> = ({ data }) => (
 );
 
 const LanguagesSlide: React.FC<SlideProps> = ({ data }) => (
-  <div className="flex flex-col justify-center h-full px-8">
+  <div className="flex flex-col justify-center h-full px-8 text-white font-grotesk">
     <h2 className="text-5xl font-black mb-8 leading-[0.9]">
       You speak <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">fluent code.</span>
     </h2>
@@ -307,7 +221,7 @@ const LanguagesSlide: React.FC<SlideProps> = ({ data }) => (
 );
 
 const SummarySlide: React.FC<SlideProps> = ({ data }) => (
-  <div className="flex flex-col items-center justify-center h-full px-6 pt-12 pb-24">
+  <div className="flex flex-col items-center justify-center h-full px-6 pt-12 pb-24 text-white font-grotesk">
     <div className="relative w-full aspect-[4/5] max-h-[60vh] bg-slate-900 rounded-3xl overflow-hidden border border-white/10 shadow-2xl animate-scale-up-vibrant group">
       {/* Card Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-black" />
@@ -352,7 +266,7 @@ const SummarySlide: React.FC<SlideProps> = ({ data }) => (
             </div>
             <div className="bg-white/5 p-3 rounded-xl">
               <div className="text-xs opacity-50 mb-1">Top Lang</div>
-              <div className="text-xl font-bold text-blue-400">{data.stats.topLanguages[0].name}</div>
+              <div className="text-xl font-bold text-blue-400">{data.stats.topLanguages[0]?.name}</div>
             </div>
           </div>
         </div>
@@ -381,12 +295,36 @@ const SummarySlide: React.FC<SlideProps> = ({ data }) => (
 
 // --- MAIN WRAPPED VIEW ---
 
-interface StoryViewProps {
-  data: MockData;
-  onReset: () => void;
+interface StoryModeProps {
+  data?: MockData; // Optional, can generate internally if missing
+  onReset?: () => void;
 }
 
-const StoryView: React.FC<StoryViewProps> = ({ data, onReset }) => {
+// Default Data Generator if no props provided
+const defaultData: MockData = {
+  username: "demo_user",
+  avatar: "https://github.com/ghost.png",
+  year: 2024,
+  stats: {
+    commits: 1243,
+    repos: 42,
+    starsReceived: 890,
+    forks: 120,
+    topLanguages: [
+      { name: "TypeScript", percent: 45, color: "#3178c6" },
+      { name: "Rust", percent: 30, color: "#dea584" },
+      { name: "Python", percent: 15, color: "#3572A5" },
+      { name: "Go", percent: 10, color: "#00ADD8" }
+    ],
+    busiestDay: "Wednesday",
+    busiestTime: "Late Night 🌑",
+    longestStreak: 18,
+    personality: "The Night Owl 🦉",
+    personalityDesc: "Most of your commits happen after 8 PM. Who needs sleep when there's code to ship?"
+  }
+};
+
+const StoryMode: React.FC<StoryModeProps> = ({ data = defaultData, onReset }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   
@@ -404,7 +342,8 @@ const StoryView: React.FC<StoryViewProps> = ({ data, onReset }) => {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(c => c + 1);
     } else {
-      // End of story? maybe loop or just stay
+      // Loop or Stop? For now, we stop at the last slide.
+      // If you want to loop: setCurrentSlide(0);
     }
   }, [currentSlide, slides.length]);
 
@@ -426,12 +365,13 @@ const StoryView: React.FC<StoryViewProps> = ({ data, onReset }) => {
 
   return (
     <div 
-      className={`fixed inset-0 z-50 transition-colors duration-700 ease-in-out bg-gradient-to-br ${slides[currentSlide].theme}`}
+      className={`fixed inset-0 z-50 transition-colors duration-700 ease-in-out bg-gradient-to-br ${slides[currentSlide].theme} select-none`}
       onMouseDown={() => setIsPaused(true)}
       onMouseUp={() => setIsPaused(false)}
       onTouchStart={() => setIsPaused(true)}
       onTouchEnd={() => setIsPaused(false)}
     >
+      <StoryStyles />
       <div className="noise-overlay" />
       
       {/* Progress Bars */}
@@ -443,22 +383,25 @@ const StoryView: React.FC<StoryViewProps> = ({ data, onReset }) => {
       />
 
       {/* Close/Reset Button */}
-      <button 
-        onClick={onReset}
-        className="absolute top-6 right-4 z-50 p-2 bg-black/20 rounded-full backdrop-blur-md text-white/50 hover:text-white transition-colors"
-      >
-        <RefreshCw size={20} />
-      </button>
+      {onReset && (
+        <button 
+          onClick={onReset}
+          className="absolute top-6 right-4 z-50 p-2 bg-black/20 rounded-full backdrop-blur-md text-white/50 hover:text-white transition-colors"
+        >
+          <RefreshCw size={20} />
+        </button>
+      )}
 
       {/* Tap Navigation Zones */}
       <div className="absolute inset-0 flex z-40">
-        <div className="w-1/3 h-full" onClick={prevSlide} />
-        <div className="w-2/3 h-full" onClick={nextSlide} />
+        <div className="w-1/3 h-full cursor-w-resize" onClick={prevSlide} />
+        <div className="w-2/3 h-full cursor-e-resize" onClick={nextSlide} />
       </div>
 
       {/* Slide Content */}
-      <div className="relative z-30 h-full max-w-md mx-auto safe-area-bottom">
-        <div key={currentSlide} className="h-full animate-text-reveal">
+      <div className="relative z-30 h-full max-w-md mx-auto safe-area-bottom pointer-events-none">
+        {/* Enable pointer events on children if they have interactive elements */}
+        <div key={currentSlide} className="h-full pointer-events-auto">
           <CurrentComponent data={data} />
         </div>
       </div>
@@ -466,126 +409,4 @@ const StoryView: React.FC<StoryViewProps> = ({ data, onReset }) => {
   );
 };
 
-// --- LANDING & LOADING (Kept Clean) ---
-
-interface LandingViewProps {
-  onGenerate: (username: string) => void;
-}
-
-const LandingView: React.FC<LandingViewProps> = ({ onGenerate }) => {
-  const [username, setUsername] = useState('');
-  
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center bg-black relative overflow-hidden font-grotesk">
-       <div className="noise-overlay" />
-       <div className="absolute top-[-20%] left-[-20%] w-[500px] h-[500px] bg-green-600/30 rounded-full blur-[120px]" />
-       <div className="absolute bottom-[-20%] right-[-20%] w-[500px] h-[500px] bg-purple-600/30 rounded-full blur-[120px]" />
-
-       <div className="relative z-10 max-w-md w-full">
-         <div className="inline-block mb-6 animate-float">
-           <Github size={64} className="text-white" />
-         </div>
-         <h1 className="text-7xl font-black tracking-tighter mb-6 leading-[0.9]">
-           GITHUB <br/>
-           <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-300">WRAPPED</span>
-         </h1>
-         
-         <form 
-           onSubmit={(e: React.FormEvent) => { e.preventDefault(); if(username) onGenerate(username); }}
-           className="relative group"
-         >
-            <div className="absolute -inset-1 bg-gradient-to-r from-green-500 to-blue-500 rounded-2xl blur opacity-30 group-hover:opacity-70 transition duration-500" />
-            <div className="relative flex items-center bg-black/80 rounded-2xl p-2 ring-1 ring-white/10 backdrop-blur-xl">
-              <span className="pl-4 font-mono text-white/40">@</span>
-              <input
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="username"
-                className="w-full bg-transparent p-4 text-xl font-bold text-white outline-none font-mono placeholder:text-white/20"
-                autoFocus
-              />
-              <button 
-                type="submit" 
-                className="bg-white text-black p-4 rounded-xl font-bold hover:scale-105 transition-transform active:scale-95"
-              >
-                <ArrowRight />
-              </button>
-            </div>
-         </form>
-         
-         <p className="mt-8 text-white/40 font-mono text-xs uppercase tracking-widest">
-           Your 2024 Coding Review
-         </p>
-       </div>
-    </div>
-  );
-};
-
-interface LoadingViewProps {
-  onComplete: () => void;
-}
-
-const LoadingView: React.FC<LoadingViewProps> = ({ onComplete }) => {
-  const [progress, setProgress] = useState(0);
-  
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress(p => {
-        if(p >= 100) {
-          clearInterval(timer);
-          setTimeout(onComplete, 500);
-          return 100;
-        }
-        return p + 2;
-      });
-    }, 40);
-    return () => clearInterval(timer);
-  }, [onComplete]);
-
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white font-mono">
-       <div className="w-64">
-         <div className="flex justify-between mb-2 text-xs opacity-50">
-           <span>ANALYZING_REPO_DATA</span>
-           <span>{progress}%</span>
-         </div>
-         <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-           <div 
-             className="h-full bg-green-500 transition-all duration-100 ease-out" 
-             style={{ width: `${progress}%` }} 
-           />
-         </div>
-         <div className="mt-4 text-xs text-center text-green-500/80 animate-pulse">
-           {progress < 30 && "Fetching commits..."}
-           {progress >= 30 && progress < 70 && "Calculating velocity..."}
-           {progress >= 70 && "Generating aura..."}
-         </div>
-       </div>
-    </div>
-  );
-};
-
-// --- MAIN APP ---
-
-type ViewState = 'landing' | 'loading' | 'story';
-
-const App: React.FC = () => {
-  const [view, setView] = useState<ViewState>('landing');
-  const [data, setData] = useState<MockData | null>(null);
-
-  const handleGenerate = (user: string) => {
-    setData(generateMockData(user));
-    setView('loading');
-  };
-
-  return (
-    <div className="bg-black min-h-screen text-white overflow-hidden select-none touch-manipulation">
-      <GlobalStyles />
-      {view === 'landing' && <LandingView onGenerate={handleGenerate} />}
-      {view === 'loading' && <LoadingView onComplete={() => setView('story')} />}
-      {view === 'story' && data && <StoryView data={data} onReset={() => setView('landing')} />}
-    </div>
-  );
-};
-
-export default App;
+export default StoryMode;
