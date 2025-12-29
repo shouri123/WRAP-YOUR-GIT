@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react';
-import { 
-  Github, Star, GitFork, Zap, Calendar, Clock, 
+import {
+  Github, Star, GitFork, Zap, Calendar, Clock,
   MapPin, Trophy, Share2, Download, ArrowLeft,
-  Code, Activity, Layers, Users, GitPullRequest, 
+  Code, Activity, Layers, Users, GitPullRequest,
   Heart, BookMarked
 } from 'lucide-react';
 
@@ -89,37 +89,37 @@ const defaultData: MockData = {
       { name: "Go", percent: 10, color: "#00ADD8" }
     ],
     topRepositories: [
-      { 
-        name: "octo-engine", 
-        description: "A high-performance rendering engine for the web.", 
-        stars: 342, 
-        forks: 45, 
-        language: "Rust", 
-        languageColor: "#dea584" 
+      {
+        name: "octo-engine",
+        description: "A high-performance rendering engine for the web.",
+        stars: 342,
+        forks: 45,
+        language: "Rust",
+        languageColor: "#dea584"
       },
-      { 
-        name: "react-magic", 
-        description: "Hooks you didn't know you needed until now.", 
-        stars: 215, 
-        forks: 30, 
-        language: "TypeScript", 
-        languageColor: "#3178c6" 
+      {
+        name: "react-magic",
+        description: "Hooks you didn't know you needed until now.",
+        stars: 215,
+        forks: 30,
+        language: "TypeScript",
+        languageColor: "#3178c6"
       },
-      { 
-        name: "data-viz-kit", 
-        description: "Beautiful charts made simple.", 
-        stars: 189, 
-        forks: 22, 
-        language: "Python", 
-        languageColor: "#3572A5" 
+      {
+        name: "data-viz-kit",
+        description: "Beautiful charts made simple.",
+        stars: 189,
+        forks: 22,
+        language: "Python",
+        languageColor: "#3572A5"
       },
-      { 
-        name: "go-micro", 
-        description: "Microservices framework for modern backend.", 
-        stars: 150, 
-        forks: 18, 
-        language: "Go", 
-        languageColor: "#00ADD8" 
+      {
+        name: "go-micro",
+        description: "Microservices framework for modern backend.",
+        stars: 150,
+        forks: 18,
+        language: "Go",
+        languageColor: "#00ADD8"
       }
     ],
     busiestDay: "Wednesday",
@@ -261,14 +261,14 @@ const OutputStyles: React.FC = () => (
 
 const BackgroundElements = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   // Custom Parallax Effect
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!containerRef.current) return;
       const x = (e.clientX / window.innerWidth - 0.5) * 20;
       const y = (e.clientY / window.innerHeight - 0.5) * 20;
-      
+
       const elements = containerRef.current.querySelectorAll('.parallax-layer');
       elements.forEach((el) => {
         const speed = parseFloat(el.getAttribute('data-speed') || '1');
@@ -285,10 +285,10 @@ const BackgroundElements = () => {
       {/* Moving Gradients */}
       <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-green-900/10 rounded-full blur-[120px] animate-blob-1 parallax-layer" data-speed="0.2" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-900/10 rounded-full blur-[100px] animate-blob-2 parallax-layer" data-speed="0.3" />
-      
+
       {/* Perspective Grid */}
       <div className="absolute inset-0 grid-bg transform perspective-1000 rotate-x-60 scale-150 opacity-20" />
-      
+
       {/* Floating Elements */}
       <div className="absolute top-1/4 left-10 opacity-20 animate-float-1 parallax-layer" data-speed="0.5">
         <Code size={64} className="text-green-500" />
@@ -318,7 +318,7 @@ const SimpleBarChart = ({ data }: { data: MonthlyActivity[] }) => {
           </div>
           {/* Bar */}
           <div className="w-full h-full flex items-end">
-             <div 
+            <div
               className="w-full bg-white/10 rounded-t-sm group-hover:bg-green-400/80 transition-all duration-300 ease-out relative overflow-hidden animate-grow-bar"
               style={{ height: `${(item.value / max) * 100}%`, animationDelay: `${0.8 + (i * 0.05)}s` }}
             >
@@ -336,7 +336,7 @@ const SimpleBarChart = ({ data }: { data: MonthlyActivity[] }) => {
 const SimpleDonutChart = ({ data }: { data: ContributionType[] }) => {
   let currentAngle = 0;
   const total = data.reduce((acc, item) => acc + item.value, 0);
-  
+
   const gradientParts = data.map(item => {
     const start = currentAngle;
     const percentage = (item.value / total) * 100;
@@ -348,15 +348,15 @@ const SimpleDonutChart = ({ data }: { data: ContributionType[] }) => {
   return (
     <div className="flex flex-col items-center gap-6 w-full donut-container">
       {/* Chart */}
-      <div 
+      <div
         className="w-32 h-32 rounded-full flex-shrink-0 relative donut-ring animate-spin-in delay-700"
         style={{ background: `conic-gradient(${gradientParts})` }}
       >
         <div className="absolute inset-4 bg-[#0a0a0f] rounded-full flex items-center justify-center">
-           <div className="text-center">
-             <div className="text-xs text-white/40 font-mono">TOTAL</div>
-             <div className="text-lg font-bold text-white">100%</div>
-           </div>
+          <div className="text-center">
+            <div className="text-xs text-white/40 font-mono">TOTAL</div>
+            <div className="text-lg font-bold text-white">100%</div>
+          </div>
         </div>
       </div>
 
@@ -393,7 +393,7 @@ const OutputPage: React.FC<OutputPageProps> = ({ data = defaultData, onBack }) =
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: `GitHub Wrapped 2024: ${data.username}`,
+        title: `GitHub Wrapped 2025: ${data.username}`,
         text: `Check out my coding year in review! I'm a ${data.stats.personality}.`,
         url: window.location.href,
       }).catch(console.error);
@@ -407,10 +407,10 @@ const OutputPage: React.FC<OutputPageProps> = ({ data = defaultData, onBack }) =
       <OutputStyles />
       <BackgroundElements />
       <div className="absolute inset-0 noise-bg pointer-events-none fixed z-0" />
-      
+
       {/* Navigation Bar (No Print) */}
       <nav className="fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center bg-black/50 backdrop-blur-md border-b border-white/5 no-print animate-enter">
-        <button 
+        <button
           onClick={onBack}
           className="flex items-center gap-2 text-white/60 hover:text-white transition-colors"
         >
@@ -418,14 +418,14 @@ const OutputPage: React.FC<OutputPageProps> = ({ data = defaultData, onBack }) =
           <span className="font-mono text-sm">Back to Story</span>
         </button>
         <div className="flex gap-3">
-          <button 
+          <button
             onClick={handleShare}
             className="p-2 bg-white/5 hover:bg-white/10 rounded-full transition-colors"
             title="Share"
           >
             <Share2 size={18} />
           </button>
-          <button 
+          <button
             onClick={handlePrint}
             className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-full font-bold hover:bg-slate-200 transition-colors"
           >
@@ -437,15 +437,15 @@ const OutputPage: React.FC<OutputPageProps> = ({ data = defaultData, onBack }) =
 
       {/* Main Content Area */}
       <div className="container mx-auto px-4 pt-24 pb-16 max-w-4xl relative z-10" ref={reportRef}>
-        
+
         {/* Header Section */}
         <header className="flex flex-col md:flex-row items-center md:items-start justify-between mb-12 gap-6 animate-enter delay-100">
           <div className="flex items-center gap-6">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-tr from-green-500 to-purple-500 rounded-full blur opacity-50" />
-              <img 
-                src={data.avatar} 
-                alt={data.username} 
+              <img
+                src={data.avatar}
+                alt={data.username}
                 className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-black relative z-10"
               />
               <div className="absolute -bottom-2 -right-2 bg-black p-1.5 rounded-full border border-white/10 z-20 text-white">
@@ -455,20 +455,20 @@ const OutputPage: React.FC<OutputPageProps> = ({ data = defaultData, onBack }) =
             <div className="text-center md:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-mono mb-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                2024 WRAPPED
+                2025 WRAPPED
               </div>
               <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-1">@{data.username}</h1>
               <p className="text-white/60 mb-3 max-w-md">{data.profile?.bio || "A mysterious coder..."}</p>
-              
+
               <div className="flex flex-wrap justify-center md:justify-start gap-4 text-xs font-mono text-white/40">
-                <span className="flex items-center gap-1.5"><MapPin size={12}/> {data.profile?.location || "Earth"}</span>
-                <span className="flex items-center gap-1.5"><Calendar size={12}/> Joined {data.profile?.joined || "2024"}</span>
-                <span className="flex items-center gap-1.5"><Users size={12}/> {data.profile?.followers.toLocaleString()} Followers</span>
-                <span className="flex items-center gap-1.5"><Heart size={12}/> {data.profile?.following.toLocaleString()} Following</span>
+                <span className="flex items-center gap-1.5"><MapPin size={12} /> {data.profile?.location || "Earth"}</span>
+                <span className="flex items-center gap-1.5"><Calendar size={12} /> Joined {data.profile?.joined || "2024"}</span>
+                <span className="flex items-center gap-1.5"><Users size={12} /> {data.profile?.followers.toLocaleString()} Followers</span>
+                <span className="flex items-center gap-1.5"><Heart size={12} /> {data.profile?.following.toLocaleString()} Following</span>
               </div>
             </div>
           </div>
-          
+
           <div className="text-center md:text-right print-break">
             <div className="text-sm font-mono text-white/40 uppercase tracking-widest mb-1">Developer Class</div>
             <div className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
@@ -495,20 +495,20 @@ const OutputPage: React.FC<OutputPageProps> = ({ data = defaultData, onBack }) =
 
         {/* Charts Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          
+
           {/* Monthly Activity Chart (Spans 2 cols) */}
           <div className="glass-card p-6 rounded-2xl col-span-1 md:col-span-2 print-break animate-enter delay-400">
-             <div className="flex items-center justify-between mb-4">
-                <h3 className="flex items-center gap-2 text-lg font-bold text-white/80">
-                  <Activity size={18} /> 2024 Activity Graph
-                </h3>
-                <span className="text-xs font-mono text-white/40 uppercase">Commits per Month</span>
-             </div>
-             {data.stats.monthlyActivity ? (
-               <SimpleBarChart data={data.stats.monthlyActivity} />
-             ) : (
-               <div className="h-48 flex items-center justify-center text-white/20 font-mono">No activity data available</div>
-             )}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="flex items-center gap-2 text-lg font-bold text-white/80">
+                <Activity size={18} /> 2025 Activity Graph
+              </h3>
+              <span className="text-xs font-mono text-white/40 uppercase">Commits per Month</span>
+            </div>
+            {data.stats.monthlyActivity ? (
+              <SimpleBarChart data={data.stats.monthlyActivity} />
+            ) : (
+              <div className="h-48 flex items-center justify-center text-white/20 font-mono">No activity data available</div>
+            )}
           </div>
 
           {/* Contribution Breakdown (Spans 1 col) */}
@@ -540,8 +540,8 @@ const OutputPage: React.FC<OutputPageProps> = ({ data = defaultData, onBack }) =
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="font-bold text-lg text-white group-hover:text-green-400 transition-colors">{repo.name}</h4>
                       <div className="flex items-center gap-1 text-xs font-mono text-white/40">
-                         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: repo.languageColor }}></span>
-                         {repo.language}
+                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: repo.languageColor }}></span>
+                        {repo.language}
                       </div>
                     </div>
                     <p className="text-sm text-white/60 mb-4 line-clamp-2">{repo.description}</p>
@@ -558,13 +558,13 @@ const OutputPage: React.FC<OutputPageProps> = ({ data = defaultData, onBack }) =
 
         {/* Detailed Stats Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          
+
           {/* Activity Column */}
           <div className="glass-card p-6 rounded-2xl col-span-1 print-break animate-enter delay-700">
             <h3 className="flex items-center gap-2 text-lg font-bold mb-6 text-white/80">
               <Clock size={18} /> Peak Productivity
             </h3>
-            
+
             <div className="space-y-6">
               <div>
                 <div className="text-xs font-mono text-white/40 mb-1">MOST ACTIVE TIME</div>
@@ -573,7 +573,7 @@ const OutputPage: React.FC<OutputPageProps> = ({ data = defaultData, onBack }) =
                   <div className="w-[75%] h-full bg-purple-500 rounded-full animate-grow-bar" style={{ animationDelay: '1s' }} />
                 </div>
               </div>
-              
+
               <div>
                 <div className="text-xs font-mono text-white/40 mb-1">MOST ACTIVE DAY</div>
                 <div className="text-xl font-bold text-pink-300">{data.stats.busiestDay}</div>
@@ -583,17 +583,17 @@ const OutputPage: React.FC<OutputPageProps> = ({ data = defaultData, onBack }) =
               </div>
 
               <div className="pt-4 border-t border-white/10">
-                 <div className="flex items-start gap-3">
-                   <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-500 mt-1">
-                     <Trophy size={16} />
-                   </div>
-                   <div>
-                     <div className="text-sm font-bold text-yellow-500">Top 1% Contributor</div>
-                     <div className="text-xs text-white/50 mt-1 leading-relaxed">
-                       You're in the top tier of developers based on commit volume this year.
-                     </div>
-                   </div>
-                 </div>
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-500 mt-1">
+                    <Trophy size={16} />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-yellow-500">Top 1% Contributor</div>
+                    <div className="text-xs text-white/50 mt-1 leading-relaxed">
+                      You're in the top tier of developers based on commit volume this year.
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -603,19 +603,19 @@ const OutputPage: React.FC<OutputPageProps> = ({ data = defaultData, onBack }) =
             <h3 className="flex items-center gap-2 text-lg font-bold mb-6 text-white/80">
               <Code size={18} /> Tech Stack
             </h3>
-            
+
             <div className="space-y-4">
               {data.stats.topLanguages.map((lang, i) => (
                 <div key={lang.name} className="group">
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-3">
-                      <span className="font-mono text-white/30 text-xs w-4">0{i+1}</span>
+                      <span className="font-mono text-white/30 text-xs w-4">0{i + 1}</span>
                       <span className="font-bold">{lang.name}</span>
                     </div>
                     <span className="font-mono text-xs text-white/50">{lang.percent}%</span>
                   </div>
                   <div className="relative h-3 bg-white/5 rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 group-hover:brightness-110 animate-grow-bar"
                       style={{ width: `${lang.percent}%`, backgroundColor: lang.color, animationDelay: `${1.4 + (i * 0.1)}s` }}
                     />
@@ -625,10 +625,10 @@ const OutputPage: React.FC<OutputPageProps> = ({ data = defaultData, onBack }) =
             </div>
 
             <div className="mt-8 p-4 glass-card-dark rounded-xl flex gap-4 items-center">
-               <div className="h-10 w-1 bg-green-500 rounded-full"></div>
-               <p className="text-sm text-white/70 italic">
-                 "{data.stats.personalityDesc}"
-               </p>
+              <div className="h-10 w-1 bg-green-500 rounded-full"></div>
+              <p className="text-sm text-white/70 italic">
+                "{data.stats.personalityDesc}"
+              </p>
             </div>
           </div>
         </div>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Github, Star, Zap, Share2, Download, Calendar, Award, RefreshCw
+  Github, Star, Zap, Calendar, RefreshCw
 } from 'lucide-react';
+import OutputPage, { type MockData as OutputMockData } from './output';
 
 // --- TYPES ---
 export interface Language {
@@ -23,12 +24,7 @@ export interface Stats {
   personalityDesc: string;
 }
 
-export interface MockData {
-  username: string;
-  avatar: string;
-  year: number;
-  stats: Stats;
-}
+export interface MockData extends OutputMockData { }
 
 // --- STYLES & ANIMATIONS ---
 const StoryStyles: React.FC = () => (
@@ -135,7 +131,7 @@ const IntroSlide: React.FC<SlideProps> = ({ data }) => (
       </span>
     </h1>
     <p className="text-xl text-white/70 font-mono animate-text-reveal delay-500">
-      Ready to unwrap 2024?
+      Ready to unwrap 2025?
     </p>
   </div>
 );
@@ -220,82 +216,6 @@ const LanguagesSlide: React.FC<SlideProps> = ({ data }) => (
   </div>
 );
 
-const SummarySlide: React.FC<SlideProps> = ({ data, onFinish }) => (
-  <div className="flex flex-col items-center justify-center h-full px-6 pt-12 pb-24 text-white font-grotesk">
-    <div className="relative w-full aspect-[4/5] max-h-[60vh] bg-slate-900 rounded-3xl overflow-hidden border border-white/10 shadow-2xl animate-scale-up-vibrant group">
-      {/* Card Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-black" />
-      <div className="absolute top-0 right-0 w-64 h-64 bg-green-500/20 blur-[80px] rounded-full" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/20 blur-[80px] rounded-full" />
-
-      {/* Card Content */}
-      <div className="relative z-10 h-full flex flex-col p-6 text-center">
-        <div className="flex justify-between items-start mb-6">
-          <div className="bg-white/10 p-2 rounded-lg backdrop-blur-md">
-            <Github className="w-6 h-6" />
-          </div>
-          <div className="text-right">
-            <div className="text-xs font-mono opacity-50">GITHUB WRAPPED</div>
-            <div className="font-bold">2024</div>
-          </div>
-        </div>
-
-        <div className="flex-1 flex flex-col items-center justify-center">
-          <div className="relative mb-6">
-            <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-500 rounded-full blur-lg opacity-50" />
-            <img
-              src={data.avatar}
-              className="w-24 h-24 rounded-full border-4 border-slate-900 relative z-10"
-            />
-            <div className="absolute -bottom-2 -right-2 bg-yellow-400 text-black p-1 rounded-full border-4 border-slate-900 z-20">
-              <Award size={16} />
-            </div>
-          </div>
-
-          <h2 className="text-3xl font-black mb-2 leading-none bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-            {data.stats.personality}
-          </h2>
-          <p className="text-sm opacity-60 mb-8 max-w-[200px] mx-auto leading-relaxed">
-            {data.stats.personalityDesc}
-          </p>
-
-          <div className="grid grid-cols-2 gap-3 w-full">
-            <div className="bg-white/5 p-3 rounded-xl">
-              <div className="text-xs opacity-50 mb-1">Commits</div>
-              <div className="text-xl font-bold">{data.stats.commits}</div>
-            </div>
-            <div className="bg-white/5 p-3 rounded-xl">
-              <div className="text-xs opacity-50 mb-1">Top Lang</div>
-              <div className="text-xl font-bold text-blue-400">{data.stats.topLanguages[0]?.name}</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">
-          <div className="text-xs font-mono opacity-40">github-wrapped.com</div>
-          <div className="flex gap-1">
-            {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className={`w-1 h-4 rounded-full ${i < 4 ? 'bg-green-500' : 'bg-green-900'}`} />
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div className="mt-8 flex gap-4 w-full max-w-sm animate-text-reveal delay-500">
-      <button className="flex-1 bg-white text-black font-bold py-4 rounded-full flex items-center justify-center gap-2 hover:scale-105 transition-transform">
-        <Share2 size={18} /> Share
-      </button>
-      <button
-        onClick={onFinish}
-        className="flex-1 bg-white/10 font-bold py-4 rounded-full flex items-center justify-center gap-2 backdrop-blur-md hover:bg-white/20 transition-colors"
-      >
-        <Download size={18} /> View Report
-      </button>
-    </div>
-  </div>
-);
-
 // --- MAIN WRAPPED VIEW ---
 
 interface StoryModeProps {
@@ -308,7 +228,14 @@ interface StoryModeProps {
 const defaultData: MockData = {
   username: "demo_user",
   avatar: "https://github.com/ghost.png",
-  year: 2024,
+  year: 2025,
+  profile: {
+    bio: "I code, therefore I am.",
+    location: "The Cloud",
+    joined: "2020",
+    followers: 100,
+    following: 50
+  },
   stats: {
     commits: 1243,
     repos: 42,
@@ -320,11 +247,14 @@ const defaultData: MockData = {
       { name: "Python", percent: 15, color: "#3572A5" },
       { name: "Go", percent: 10, color: "#00ADD8" }
     ],
+    topRepositories: [],
     busiestDay: "Wednesday",
     busiestTime: "Late Night 🌑",
     longestStreak: 18,
     personality: "The Night Owl 🦉",
-    personalityDesc: "Most of your commits happen after 8 PM. Who needs sleep when there's code to ship?"
+    personalityDesc: "Most of your commits happen after 8 PM. Who needs sleep when there's code to ship?",
+    monthlyActivity: [],
+    contributionBreakdown: []
   }
 };
 
@@ -337,7 +267,7 @@ const StoryMode: React.FC<StoryModeProps> = ({ data = defaultData, onReset, onFi
     { id: 'commits', component: CommitsSlide, theme: 'from-green-900 to-slate-900' },
     { id: 'day', component: DaySlide, theme: 'from-purple-900 to-slate-900' },
     { id: 'langs', component: LanguagesSlide, theme: 'from-blue-900 to-slate-900' },
-    { id: 'summary', component: SummarySlide, theme: 'from-slate-900 to-black' }
+    { id: 'output', component: () => null, theme: 'black' }
   ];
 
   const CurrentComponent = slides[currentSlide].component;
@@ -366,6 +296,10 @@ const StoryMode: React.FC<StoryModeProps> = ({ data = defaultData, onReset, onFi
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [nextSlide, prevSlide]);
+
+  if (slides[currentSlide].id === 'output') {
+    return <OutputPage data={data} onBack={prevSlide} />;
+  }
 
   return (
     <div

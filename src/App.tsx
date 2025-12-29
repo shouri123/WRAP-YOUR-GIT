@@ -9,9 +9,16 @@ function App() {
   const [page, setPage] = useState<Page>("landing");
   const [userData, setUserData] = useState<any>(null);
 
-  const fetchUserData = async (username: string) => {
+  const fetchUserData = async (username: string, token?: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/github/${username}`);
+      const headers: HeadersInit = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`http://localhost:5000/api/github/${username}`, {
+        headers
+      });
       const data = await response.json();
       setUserData(data);
       setPage("story");
