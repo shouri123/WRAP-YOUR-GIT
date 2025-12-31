@@ -16,7 +16,7 @@ function App() {
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      const response = await fetch(`http://localhost:5000/api/github/${username}`, {
+      const response = await fetch(`/api/github/${username}`, {
         headers
       });
       const data = await response.json();
