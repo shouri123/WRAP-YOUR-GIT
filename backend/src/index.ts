@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import axios from "axios";
+import "dotenv/config";
 
 const app = express();
 app.use(cors());
@@ -8,17 +9,20 @@ app.use(cors());
 app.get("/api/github/:username", async (req, res) => {
     try {
         const { username } = req.params;
-        const token = req.headers.authorization?.split(" ")[1]; // Bearer <token>
+        const userToken = req.headers.authorization?.split(" ")[1]; // Bearer <token>
+        const serverToken = process.env.GITHUB_TOKEN;
+
+        const effectiveToken = userToken || serverToken;
 
         const headers: any = {};
-        if (token) {
-            headers["Authorization"] = `token ${token}`;
+        if (effectiveToken) {
+            headers["Authorization"] = `token ${effectiveToken}`;
         }
 
         // Fetch profile, repos, and events in parallel
-        // If token is present, use /user/repos to get private repos (assuming token owner == username or has access)
-        // Otherwise use public endpoint
-        const reposUrl = token
+        // If USER token is present, use /user/repos to get private repos
+        // Otherwise use public endpoint (even if we have a server token, we want the target user's public repos, not the server owner's)
+        const reposUrl = userToken
             ? `https://api.github.com/user/repos?per_page=100&sort=updated&type=all`
             : `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`;
 
@@ -71,11 +75,19 @@ app.get("/api/github/:username", async (req, res) => {
                 languageColor: getColorForLanguage(repo.language || "Unknown")
             }));
 
-        // 4. Activity (Busiest Day & Time) from Events
+        // 4. Activity (Busiest Day & Time) from Events & Monthly Activity & Streak
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const dayCounts: Record<string, number> = {};
         const hourCounts: Record<number, number> = {};
         let pushEventsCount = 0;
+
+        // Initialize monthly activity (Jan-Dec)
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const monthlyActivityMap: Record<string, number> = {};
+        monthNames.forEach(m => monthlyActivityMap[m] = 0);
+
+        // Track unique active days for streak
+        const activeDates = new Set<string>();
 
         events.forEach((event: any) => {
             if (event.type === 'PushEvent') pushEventsCount++;
@@ -83,9 +95,13 @@ app.get("/api/github/:username", async (req, res) => {
             const date = new Date(event.created_at);
             const day = days[date.getDay()];
             const hour = date.getHours();
+            const month = monthNames[date.getMonth()];
+            const dateString = date.toISOString().split('T')[0]; // YYYY-MM-DD
 
             dayCounts[day] = (dayCounts[day] || 0) + 1;
             hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+            monthlyActivityMap[month] = (monthlyActivityMap[month] || 0) + 1;
+            activeDates.add(dateString);
         });
 
         const busiestDay = Object.entries(dayCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "Monday";
@@ -96,6 +112,33 @@ app.get("/api/github/:username", async (req, res) => {
         else if (busiestHour < 12) busiestTime = "Morning 🌅";
         else if (busiestHour > 18) busiestTime = "Evening 🌆";
 
+        // Calculate Longest Streak from activeDates
+        const sortedDates = Array.from(activeDates).sort();
+        let longestStreak = 0;
+        let currentStreak = 0;
+
+        if (sortedDates.length > 0) {
+            longestStreak = 1;
+            currentStreak = 1;
+            for (let i = 1; i < sortedDates.length; i++) {
+                const prev = new Date(sortedDates[i - 1]);
+                const curr = new Date(sortedDates[i]);
+                const diffTime = Math.abs(curr.getTime() - prev.getTime());
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 1) {
+                    currentStreak++;
+                } else {
+                    currentStreak = 1;
+                }
+                if (currentStreak > longestStreak) longestStreak = currentStreak;
+            }
+        }
+
+        const monthlyActivity = monthNames.map(month => ({
+            month,
+            value: monthlyActivityMap[month]
+        }));
         // 5. Contribution Breakdown
         const eventTypes: Record<string, number> = {};
         events.forEach((event: any) => {
@@ -130,15 +173,10 @@ app.get("/api/github/:username", async (req, res) => {
                 topRepositories,
                 busiestDay,
                 busiestTime,
-                longestStreak: Math.floor(Math.random() * 20) + 1, // Still mocked as it requires full history
+                longestStreak,
                 personality: "The Open Sourcerer 🧙‍♂️",
                 personalityDesc: `You're most active on ${busiestDay}s during the ${busiestTime.toLowerCase()}.`,
-                monthlyActivity: [ // Mock activity for now
-                    { month: 'Jan', value: 45 }, { month: 'Feb', value: 60 }, { month: 'Mar', value: 85 },
-                    { month: 'Apr', value: 40 }, { month: 'May', value: 90 }, { month: 'Jun', value: 120 },
-                    { month: 'Jul', value: 75 }, { month: 'Aug', value: 30 }, { month: 'Sep', value: 100 },
-                    { month: 'Oct', value: 140 }, { month: 'Nov', value: 80 }, { month: 'Dec', value: 55 }
-                ],
+                monthlyActivity,
                 contributionBreakdown
             }
         };
